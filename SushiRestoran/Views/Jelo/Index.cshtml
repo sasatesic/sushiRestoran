@@ -1,0 +1,130 @@
+﻿@model IEnumerable<SushiRestoran.Models.Jelo>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Lista Jela</h2>
+
+<hr />
+
+@Html.ActionLink("Dodaj Novo Jelo", "DodajJelo", "Jelo", null, new { @class = "btn btn-primary", @style="margin-bottom: 10px;" })
+
+<br />
+
+<table class="table table-bordered table-hover mt-1" style="margin-top: 10px" id="jela">
+    <thead>
+        <tr>
+            <th>Naziv</th>
+            <th>Tip Sushija</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var jelo in Model)
+        {
+            <tr>
+                <td>@jelo.Naziv</td>
+                <td>@jelo.TipSushija.Naziv</td>
+                <td class="text-center">
+                    @Html.ActionLink("Izmeni", "Izmeni", "Jelo", new { id = jelo.Id }, new { @class = "btn btn-primary" })
+                    <button data-jelo-id="@jelo.Id" class="btn btn-danger js-delete">Obrisi Jelo</button>
+                    @Html.ActionLink("Informacije O Jelu", "Informacije", "Jelo", new { id = jelo.Id }, new { @class = "btn btn-info" })
+                    @if (jelo.NaMeniju == true)
+                    {
+                        <button data-jelo-id="@jelo.Id" class="btn btn-danger js-meni-obrisi">Obrisi Sa Menija</button>
+                    }
+                    else
+                    {
+                        <button data-jelo-id="@jelo.Id" class="btn btn-success js-meni-dodaj">Dodaj Na Meni</button>
+                    }
+
+                </td>
+
+
+
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            $("#jela").DataTable({
+                language: {
+                    processing: "Procesiranje u toku...",
+                    search: "Pretraga:",
+                    lengthMenu: "Prikaži _MENU_ elemenata",
+                    info: "Prikaz _START_ do _END_ od ukupno _TOTAL_ elemenata",
+                    infoEmpty: "Prikaz 0 do 0 od ukupno 0 elemenata",
+                    infoFiltered: "(filtrirano od ukupno _MAX_ elemenata)",
+                    infoPostFix: "",
+                    Search: "Pretraga:",
+                    loadingRecords: "Chargement en cours...",
+                    zeroRecords: "Nije pronađen nijedan rezultat",
+                    emptyTable: "Aucune donnée disponible dans le tableau",
+                    paginate: {
+                        first: "Početna",
+                        previous: "Prethodna",
+                        next: "Sledeća",
+                        last: "Poslednja"
+                    }
+                }
+            });
+
+            $("#jela .js-delete").on("click", function () {
+                let button = $(this);
+
+                bootbox.confirm("Da li ste sigurni da zelite da obrisete ovo jelo?", function (result) {
+                    if (result) {
+                        $.ajax({
+                            url: "/api/jela/" + button.attr("data-jelo-id"),
+                            method: "DELETE",
+                            success: function () {
+                                window.location.reload();
+                            }
+                        })
+                    }
+                })
+            });
+        })
+
+        $(document).ready(function () {
+            $("#jela .js-meni-dodaj").on("click", function () {
+                let button = $(this);
+
+                bootbox.confirm("Da li ste sigurni da zelite da dodate ovo jelo na meni?", function (result) {
+                    if (result) {
+                        $.ajax({
+                            url: "/api/jela/dodajnameni/" + button.attr("data-jelo-id"),
+                            method: "POST",
+                            success: function () {
+                                window.location.reload();
+                            }
+                        })
+                    }
+                })
+            });
+        })
+
+        $(document).ready(function () {
+            $("#jela .js-meni-obrisi").on("click", function () {
+                let button = $(this);
+
+                bootbox.confirm("Da li ste sigurni da zelite da obrisete ovo jelo sa menija?", function (result) {
+                    if (result) {
+                        $.ajax({
+                            url: "/api/jela/obrisisamenija/" + button.attr("data-jelo-id"),
+                            method: "POST",
+                            success: function () {
+                                window.location.reload();
+                            }
+                        })
+                    }
+                })
+            });
+        })
+    </script>
+}

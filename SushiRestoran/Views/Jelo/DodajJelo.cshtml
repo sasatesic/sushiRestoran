@@ -1,0 +1,50 @@
+﻿@model SushiRestoran.ViewModels.JeloFormViewModel
+@{
+    ViewBag.Title = "DodajJelo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Novo Jelo</h2>
+
+<hr />
+
+@using (Html.BeginForm("Sacuvaj", "Jelo"))
+{
+    <div class="form-group">
+        @Html.LabelFor(j => j.Naziv)
+        @Html.TextBoxFor(j => j.Naziv, new { @class = "form-control" })
+        @Html.ValidationMessageFor(j => j.Naziv, null, new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(j => j.BrojKomada)
+        @Html.TextBoxFor(j => j.BrojKomada, new { @class = "form-control" })
+        @Html.ValidationMessageFor(j => j.BrojKomada, null, new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(j => j.JedinicnaCena)
+        @Html.TextBoxFor(j => j.JedinicnaCena, new { @class = "form-control" })
+        @Html.ValidationMessageFor(j => j.JedinicnaCena, null, new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(j => j.Sastojci)
+        @Html.TextAreaFor(j => j.Sastojci, new { @class = "form-control" })
+        @Html.ValidationMessageFor(j => j.Sastojci, null, new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(j => j.TipSushijaId)
+        @Html.DropDownListFor(j => j.TipSushijaId, new SelectList(Model.TipoviSushija, "Id", "Naziv"), "Izaberi Tip Sushija", new { @class = "form-control" })
+        @Html.ValidationMessageFor(j => j.TipSushijaId, null,  new { @class = "text-danger" })
+    </div>
+    <div class="checkbox">
+        <label>
+            @Html.CheckBoxFor(j => j.NaMeniju) Dodaj Odmah Na Meni?
+        </label>
+    </div>
+    @Html.HiddenFor(j => j.Id)
+    <button type="submit" class="btn btn-primary">Sacuvaj</button>
+}
+
+@section scripts
+    {
+        @Scripts.Render("~/bundles/jqueryval");
+    }

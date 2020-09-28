@@ -1,0 +1,31 @@
+﻿@model SushiRestoran.Models.Jelo
+@{
+    ViewBag.Title = "Informacije";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Informacije O Jelu</h2>
+<hr />
+
+<ul class="list-group">
+    <li class="list-group-item">
+        <strong class="text-primary">Naziv Jela : </strong>@Model.Naziv
+    </li>
+    <li class="list-group-item">
+        <strong class="text-primary">Tip Sushija : </strong>@Model.TipSushija.Naziv
+    </li>
+    <li class="list-group-item">
+        <strong class="text-primary">Sastojci : </strong>@Model.Sastojci
+    </li>
+    <li class="list-group-item">
+        <strong class="text-primary">Jedinicna Cena : </strong>@Model.JedinicnaCena RSD
+    </li>
+    <li class="list-group-item">
+        <strong class="text-primary">Broj Komada : </strong>@Model.BrojKomada
+    </li>
+    <li class="list-group-item">
+        <strong class="text-primary">Naziv Jela : </strong>@Model.Naziv
+    </li>
+
+</ul>
+

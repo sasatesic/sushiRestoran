@@ -1,0 +1,62 @@
+﻿@model IEnumerable<SushiRestoran.Models.Narudzbina>
+@{
+    ViewBag.Title = "ListaNarudzbina";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Lista Narudzbina</h2>
+
+<table class="table table-bordered table-hover mt-1" style="margin-top: 10px" id="narudzbine">
+    <thead>
+        <tr>
+            <th>Id Porudzbine</th>
+            <th>Datum i Vreme Porudzbine</th>
+            <th>Ukupna Vrednost</th>
+            <th>Kompletirana</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var narudzbina in Model)
+        {
+            <tr>
+                <td>@narudzbina.Id</td>
+                <td>@narudzbina.DatumVreme</td>
+                <td>@narudzbina.UkupnaVrednost</td>
+                    @if (narudzbina.Kompletirana == true)
+                    {
+                        <td>Kompletirana</td>
+                    } else {
+                        <td>Nije Kompletirana</td>
+                    }
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $("#narudzbine").DataTable({
+                language: {
+                    processing: "Procesiranje u toku...",
+                    search: "Pretraga:",
+                    lengthMenu: "Prikaži _MENU_ elemenata",
+                    info: "Prikaz _START_ do _END_ od ukupno _TOTAL_ elemenata",
+                    infoEmpty: "Prikaz 0 do 0 od ukupno 0 elemenata",
+                    infoFiltered: "(filtrirano od ukupno _MAX_ elemenata)",
+                    infoPostFix: "",
+                    Search: "Pretraga:",
+                    loadingRecords: "Chargement en cours...",
+                    zeroRecords: "Nije pronađen nijedan rezultat",
+                    emptyTable: "Aucune donnée disponible dans le tableau",
+                    paginate: {
+                        first: "Početna",
+                        previous: "Prethodna",
+                        next: "Sledeća",
+                        last: "Poslednja"
+                    }
+                }
+            });
+        });
+    </script>
+}

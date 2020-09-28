@@ -1,0 +1,104 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Nova Narudzbina</h2>
+
+<form id="novaNarudzbina">
+    <div class="form-group">
+    <label>Narudzbina</label>
+        <div class="form-group">
+            <label>Jelo</label>
+            @Html.DropDownList("Jela", new SelectList(Model.Jela, "Id", "Naziv"), "Izaberi Jelo", new { @class = "form-control" })
+            <button class="btn btn-success js-dodajjelo" style="margin-top: 10px;" type="button">Dodaj Jelo</button>
+        </div>
+    </div>
+    <hr />
+    <label style="margin-bottom: 10px;">Stavke Narudzbine</label>
+    <div class="row">
+        <div class="col-md-4 col-sm-4">
+            <ul id="jela" class="list-group"></ul>
+        </div>
+    </div>
+    <button class="btn btn-info js-vrednost" style="margin-bottom: 10px;" type="button">Izracunaj Ukupnu Vrednost</button>
+    <h4 class="text-info" style="margin-bottom: 20px;">Ukupna cena: <span id="ukupnaCena"></span></h4>
+    <button class="btn btn-primary">Kompletiraj Porudzbinu</button>
+</form>
+
+@section scripts {
+
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            var vm = {
+                jela: []
+            };
+            $("#novaNarudzbina .js-dodajjelo").on("click", function () {
+                let button = $(this);
+                let kolicina = 1;
+                let id = $("#Jela option:selected").val();
+                let index = vm.jela.findIndex(j => j.jeloId===id);
+
+                if(index !== -1){
+                    vm.jela[index].kolicina = vm.jela[index].kolicina + 1;
+                    $("span#"+id+"").text(" - Kolicina: "+vm.jela[index].kolicina);
+                    vm.jela[index].ukupnaVrednost = vm.jela[index].ukupnaVrednost + vm.jela[index].ukupnaVrednost
+                    console.log(vm.jela);
+                } else {
+                    $.ajax({
+                        url: "/api/jelo/" + id,
+                        method: "GET",
+                        success: function (data) {
+                            $("#jela").append("<li class='list-group-item' data-id=" + data.id + ">" + data.naziv + " - " + data.jedinicnaCena + " RSD" + " " + "<span id="+data.id+"> - Kolicina: " + kolicina + "</span>" + "</li>");
+                            let obj = {
+                                jeloId: id,
+                                kolicina: kolicina,
+                                ukupnaVrednost: data.jedinicnaCena
+                            };
+                            vm.jela.push(obj);
+                            console.log(vm.jela);
+                        }
+                    })
+                }
+            })
+
+            $("#novaNarudzbina .js-vrednost").on("click", function () {
+                let vrednost = 0;
+                for(let i = 0; i < vm.jela.length; i++) {
+                    vrednost += vm.jela[i].ukupnaVrednost;
+                }
+                $("span#ukupnaCena").text(vrednost + " RSD");
+            })
+
+            $.validator.addMethod("barJednoJelo", function () {
+                return vm.jela.length > 0;
+            }, "Morate uneti bar jedno jelo.");
+
+            var validator = $("#novaNarudzbina").validate({
+                submitHandler: function () {
+                    $.ajax({
+                        url: "/api/narudzbina",
+                        method: "post",
+                        data: vm
+                    })
+                    .done(function () {
+                        toastr.success("Narudzbina uspesno napravljena.");
+                        $("#Jela").prop('selectedIndex',0);
+                        $("span#ukupnaCena").text("0 RSD");
+                        $('#jela').empty();
+                        validator.resetForm();
+                        vm.jela = [];
+                    })
+                    .fail(function () {
+                        toastr.error("Doslo je do neke greske.");
+                    });
+                    return false;
+                }
+            });
+        })
+        
+
+
+    </script>
+}
